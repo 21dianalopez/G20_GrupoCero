@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700">
+    <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="assets/css/Contact-Form-Clean.css">
+    <link rel="stylesheet" href="assets/css/Footer-Dark.css">
+    <link rel="stylesheet" href="assets/css/Header-Blue.css">
+    <link rel="stylesheet" href="assets/css/Header-Dark.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.8/swiper-bundle.min.css">
+    <link rel="stylesheet" href="assets/css/Login-Form-Dark-1.css">
+    <link rel="stylesheet" href="assets/css/Login-Form-Dark.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="assets/css/Registration-Form-with-Photo.css">
+    <link rel="stylesheet" href="assets/css/Simple-Slider.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+            
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script type="text/javascript">
+        function cargarTabla(){
+           $.ajax({
+              url: 'https://gd637e035448740-db202109231844.adb.sa-santiago-1.oraclecloudapps.com/ords/admin/library/library',
+              type: 'GET',
+              dataType: 'json',
+              success: function(response){
+                 var resultado = "";
+                 response.items.forEach(function(items) {
+                    resultado +="<tr><td class="+items.id+" id=borrar"+items.id+">"+items.id+"</td><td>";
+                    resultado +=items.target+"</td><td>";
+                    resultado +=items.capacity+"</td><td>";
+                    resultado +=items.category_id+"</td><td>";
+                    resultado +=items.name+"</td><td>";
+                    resultado +="<button onclick=\"editar("+items.id+")\" class=\"btn btn-light btn-lg action-button botones\">Editar</button><button onclick=\"borrar("+items.id+")\" class=\"btn btn-light btn-lg action-button botones\">Borrar</button></td></tr>";
+                 });
+                 $(".cuerpoTabla").html(resultado);
+
+              },
+              error: function(xhr,status){
+                 console.log(xhr,responseText);
+              },
+              complete: function(xhr,status){
+                //  console.log(xhr,responseText);
+              }
+           });
+        }
+        
+        function borrar(idBorrar){
+            var id = idBorrar;
+            let mydata={
+                id:id,
+            }; 
+            let dataToSend = JSON.stringify(mydata); 
+            
+           $.ajax({
+                url:'https://gd637e035448740-db202109231844.adb.sa-santiago-1.oraclecloudapps.com/ords/admin/library/library',
+                type: 'DELETE',
+                data:dataToSend,
+                contentType: 'aplication/JSON',
+                dataType: 'JSON',
+                // statusCode:{
+                //     204:function(respuesta){
+                //         cargarTabla();
+                //         $("#respuesta").empty();
+                //         alert("se elimino el dato")
+                //     }
+                // },
+                success:function(respuesta){
+                    
+                    $("#respuesta").empty();
+                    
+                    alert("se elimino")
+                    cargarTabla();
+                },
+
+                error: function(jqXHR,textStatus, errorThrown){
+                    console.log(xhr,responseText);
+                    alert("mierda");
+
+                },
+                complete: function(xhr,status){
+                    console.log(xhr,status)
+                   
+                }
+            });
+
+        }
+
+        function editar(idEditar){
+            $.ajax({
+              url: 'https://gd637e035448740-db202109231844.adb.sa-santiago-1.oraclecloudapps.com/ords/admin/library/library',
+              type: 'GET',
+              dataType: 'json',
+              success: function(response){
+                 var resultado = "";
+                 response.items.forEach(function(items) {
+                     if (items.id == idEditar){
+                        resultado +="<label class=\"labeleditar\">Id<input id=\"ideditado\" value="+items.id+"></label><label id=\"labeleditar\">Target<input class=\"targeteditado\" value=";
+                        resultado +=items.target+"></label><label class=\"labeleditar\">Capacity<input id=\"capacityeditado\"  value=";
+                        resultado +=items.capacity+"></label><label class=\"labeleditar\">Category_id<input id=\"category_ideditado\"  value=";
+                        resultado +=items.category_id+"></label><label class=\"labeleditar\">Name<input id=\"nameeditado\" value=";
+                        resultado +=items.name+"></label>";
+                        resultado +="<button onclick=\"editar2("+idEditar+")\" class=\"btn btn-light btn-lg action-button botones\">Editar</button>";
+                     }
+                     $(".cuerpo").html(resultado);
+                   
+                 });
+                 
+
+              },
+              error: function(xhr,status){
+                 console.log(xhr,responseText);
+              },
+              complete: function(xhr,status){
+                //  console.log(xhr,responseText);
+              }
+           });
+                
+         }
+
+        function editar2(idEditar){
+            let editado={
+                id : $("#ideditado").val(),
+                target :$("#targeteditado").val(),
+                capacity : $("#capacityeditado").val(),
+                category_id :$("#category_ideditado").val(),
+                name : $("#nameeditado").val(),
+            };
+            let dataToSend=JSON.stringify(editado);
+            $.ajax({
+                url:"https:gd637e035448740-db202109231844.adb.sa-santiago-1.oraclecloudapps.com/ords/admin/library/library",
+                type:"PUT",
+                data:dataToSend,
+                contentType:"application/JSON",
+                datatype:"JSON",
+                success:function(respuesta){
+                    $("respuesta").empty;
+                    $("#ideditado").val("");
+                    $("#targeteditado").val("");
+                    $("#capacityeditado").val("");
+                    $("#category_ideditado").val("");
+                    $("#nameeditado").val("");
+                    alert("se actualizo el dato");
+                    cargarTabla()
+                }
+            });
+        }
+        
+        $(document).ready(function(){
+            
+            cargarTabla();
+        });
+    </script>
+</head>
+
+<body style="transform: perspective(0px);background: linear-gradient(-5deg, black -55%, var(--bs-yellow) 81%, white), var(--bs-yellow)">
+    <header class="header-blue" style="transform: perspective(0px);background:linear-gradient(-180deg, black 24%, var(--bs-yellow) 142%, white);height: 120px;">
+        <nav class="navbar navbar-dark navbar-expand-md navigation-clean-search">
+            <div class="container-fluid"><a class="navbar-brand" href="#">Cubicle<br></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="navbar-nav"></ul>
+                    <form class="d-flex me-auto navbar-form" target="_self">
+                        <div class="d-flex align-items-center"><input class="form-control search-field" type="search" id="search-field" name="search"></div>
+                    </form><span class="navbar-text"> </span><a class="btn btn-light action-button" role="button" href="#">Sign Up</a>
+                </div>
+            </div>
+        </nav>
+        <div class="container hero">
+            <div class="row">
+                
+            </div>
+        </div>
+    </header>
+    <div class="col-12 col-lg-6 col-xl-5 offset-xl-1 conte1">
+        <h1 style="margin: 87px 0px 25px;">Cubicle</h1><button class="btn btn-light btn-lg action-button botones" type="button"><a href="/newCubicle.html" style="text-decoration: none; color:black;">New&nbsp;&nbsp;cubicle</a><br></button>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Target</th>
+                        <th>Capacity</th>
+                        <th>Category_id</th>
+                        <th>name</th>
+                    </tr>
+                </thead>
+                <tbody class="cuerpoTabla">
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-5 col-lg-5 offset-lg-1 offset-xl-0 d-none d-lg-block phone-holder conte2">
+        <div class="cuerpo">
+
+        </div>
+        <div class="wobble animated phone-mockup" style="background: url(&quot;https://mesfix.com/blog/wp-content/uploads/2019/04/LIBROS-DE-EMPRENDIMIENTO.png&quot;);width: 61%;height: 67%;background-size: cover;margin: 63px;border-radius: 23px;"></div>
+    </div>
+    
+    
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.8/swiper-bundle.min.js"></script>
+    <script src="assets/js/Simple-Slider.js"></script>
+</body>
+
+</html>
